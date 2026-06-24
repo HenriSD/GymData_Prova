@@ -1,0 +1,486 @@
+openapi: 3.0.0
+info:
+  title: GymData API
+  version: 1.0.0
+  description: Sistema de gerenciamento de academia
+
+servers:
+  - url: http://localhost:8080/api
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  security:
+    - bearerAuth: []
+
+paths:
+
+  /login:
+    post:
+      tags: [Auth]
+      summary: Gerar token JWT
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email: { type: string, example: admin@gymdata.com }
+                senha: { type: string, example: "123456" }
+      responses:
+        200:
+          description: Token gerado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token: { type: string }
+        401:
+          description: Credenciais inválidas
+
+  /usuarios:
+    get:
+      tags: [Usuários]
+      summary: Listar usuários
+      security: [{ bearerAuth: [] }]
+      responses:
+        200: { description: Lista de usuários }
+    post:
+      tags: [Usuários]
+      summary: Criar usuário
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nome: { type: string }
+                email: { type: string }
+                senha: { type: string }
+      responses:
+        201: { description: Usuário criado }
+
+  /usuarios/{id}:
+    get:
+      tags: [Usuários]
+      summary: Buscar usuário
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        200: { description: Usuário encontrado }
+        404: { description: Não encontrado }
+    put:
+      tags: [Usuários]
+      summary: Atualizar usuário
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nome: { type: string }
+                email: { type: string }
+      responses:
+        200: { description: Atualizado }
+    delete:
+      tags: [Usuários]
+      summary: Remover usuário
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        204: { description: Removido }
+
+  /alunos:
+    get:
+      tags: [Alunos]
+      summary: Listar alunos
+      security: [{ bearerAuth: [] }]
+      responses:
+        200: { description: Lista de alunos }
+    post:
+      tags: [Alunos]
+      summary: Criar aluno
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nome: { type: string }
+                email: { type: string }
+                cpf: { type: string }
+                telefone: { type: string }
+                data_nascimento: { type: string, format: date }
+      responses:
+        201: { description: Aluno criado }
+
+  /alunos/{id}:
+    get:
+      tags: [Alunos]
+      summary: Buscar aluno
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        200: { description: Aluno encontrado }
+        404: { description: Não encontrado }
+    put:
+      tags: [Alunos]
+      summary: Atualizar aluno
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nome: { type: string }
+                telefone: { type: string }
+                ativo: { type: boolean }
+      responses:
+        200: { description: Atualizado }
+    delete:
+      tags: [Alunos]
+      summary: Remover aluno
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        204: { description: Removido }
+
+  /planos:
+    get:
+      tags: [Planos]
+      summary: Listar planos
+      security: [{ bearerAuth: [] }]
+      responses:
+        200: { description: Lista de planos }
+    post:
+      tags: [Planos]
+      summary: Criar plano
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nome: { type: string }
+                descricao: { type: string }
+                preco: { type: number }
+                duracao_dias: { type: integer }
+      responses:
+        201: { description: Plano criado }
+
+  /planos/{id}:
+    get:
+      tags: [Planos]
+      summary: Buscar plano
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        200: { description: Plano encontrado }
+    put:
+      tags: [Planos]
+      summary: Atualizar plano
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200: { description: Atualizado }
+    delete:
+      tags: [Planos]
+      summary: Remover plano
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        204: { description: Removido }
+
+  /matriculas:
+    get:
+      tags: [Matrículas]
+      summary: Listar matrículas
+      security: [{ bearerAuth: [] }]
+      responses:
+        200: { description: Lista de matrículas }
+    post:
+      tags: [Matrículas]
+      summary: Criar matrícula (pivô aluno-plano)
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                aluno_id: { type: integer }
+                plano_id: { type: integer }
+                data_inicio: { type: string, format: date }
+                data_fim: { type: string, format: date }
+                status: { type: string, enum: [ativa, inativa, cancelada] }
+      responses:
+        201: { description: Matrícula criada }
+
+  /matriculas/{id}:
+    get:
+      tags: [Matrículas]
+      summary: Buscar matrícula
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        200: { description: Matrícula encontrada }
+    put:
+      tags: [Matrículas]
+      summary: Atualizar matrícula
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status: { type: string }
+      responses:
+        200: { description: Atualizado }
+    delete:
+      tags: [Matrículas]
+      summary: Remover matrícula
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        204: { description: Removido }
+
+  /treinos:
+    get:
+      tags: [Treinos]
+      summary: Listar treinos
+      security: [{ bearerAuth: [] }]
+      responses:
+        200: { description: Lista de treinos }
+    post:
+      tags: [Treinos]
+      summary: Criar treino
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nome: { type: string }
+                aluno_id: { type: integer }
+                observacoes: { type: string }
+      responses:
+        201: { description: Treino criado }
+
+  /treinos/{id}:
+    get:
+      tags: [Treinos]
+      summary: Buscar treino
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        200: { description: Treino encontrado }
+    put:
+      tags: [Treinos]
+      summary: Atualizar treino
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200: { description: Atualizado }
+    delete:
+      tags: [Treinos]
+      summary: Remover treino
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        204: { description: Removido }
+
+  /treinos/{id}/exercicios:
+    post:
+      tags: [Treinos]
+      summary: Adicionar exercício ao treino (pivô)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                exercicio_id: { type: integer }
+                series: { type: integer }
+                repeticoes: { type: integer }
+                carga_kg: { type: number }
+      responses:
+        201: { description: Exercício adicionado }
+
+  /treinos/{id}/exercicios/{exercicio_id}:
+    delete:
+      tags: [Treinos]
+      summary: Remover exercício do treino (pivô)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+        - in: path
+          name: exercicio_id
+          required: true
+          schema: { type: integer }
+      responses:
+        204: { description: Removido }
+
+  /exercicios:
+    get:
+      tags: [Exercícios]
+      summary: Listar exercícios
+      security: [{ bearerAuth: [] }]
+      responses:
+        200: { description: Lista de exercícios }
+    post:
+      tags: [Exercícios]
+      summary: Criar exercício
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nome: { type: string }
+                grupo_muscular: { type: string }
+                descricao: { type: string }
+      responses:
+        201: { description: Exercício criado }
+
+  /exercicios/{id}:
+    get:
+      tags: [Exercícios]
+      summary: Buscar exercício
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        200: { description: Exercício encontrado }
+    put:
+      tags: [Exercícios]
+      summary: Atualizar exercício
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200: { description: Atualizado }
+    delete:
+      tags: [Exercícios]
+      summary: Remover exercício
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        204: { description: Removido }

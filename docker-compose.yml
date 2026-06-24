@@ -1,0 +1,75 @@
+version: "3.9"
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+
+services:
+
+  db:
+    image: postgres:17-alpine
+    container_name: gymdata_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: docker/node-web/Dockerfile
+      target: runtime
+    container_name: gymdata_app
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DB_HOST: db
+    networks:
+      - app-network
+    depends_on:
+      db:
+        condition: service_healthy
+    # Sem "ports" — Node só acessível via Nginx
+
+  nginx:
+    build:
+      context: docker/nginx
+      dockerfile: Dockerfile
+    container_name: gymdata_nginx
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    networks:
+      - app-network
+    depends_on:
+      - app
+
+  # Container CLI — não sobe com "up", use: docker compose run --rm cli migrate
+  cli:
+    build:
+      context: .
+      dockerfile: docker/node-web/Dockerfile
+      target: runtime
+    env_file: .env
+    environment:
+      DB_HOST: db
+    networks:
+      - app-network
+    depends_on:
+      db:
+        condition: service_healthy
+    entrypoint: ["node", "command.js"]
+    restart: "no"
