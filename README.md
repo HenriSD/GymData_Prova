@@ -52,7 +52,7 @@ Para recriar todas as tabelas do zero:
 docker compose run --rm cli migrate:fresh
 ```
 
-> O container `cli` usa o perfil `cli` e não fica de pé permanentemente.
+> O container `cli` não fica de pé permanentemente — sobe, executa o comando e encerra.
 > Conforme orientação do professor: `docker compose run --rm <container> <command>`
 
 ---

@@ -1,6 +1,18 @@
 # Justificativa Arquitetural — GymData
 
-## 1. Escolha Tecnológica: PostgreSQL (SQL Relacional)
+## 1. Requisitos do Sistema
+
+| Item | Descrição |
+|---|---|
+| **Objetivo** | Sistema de gerenciamento de academia para controle de alunos, planos, matrículas e treinos |
+| **Entidades principais** | usuarios, alunos, planos, matriculas, treinos, exercicios, treino_exercicios |
+| **Volume estimado de dados** | ~500 alunos ativos, ~1.500 matrículas/ano, ~3.000 treinos, ~15.000 registros em treino_exercicios |
+| **Usuários estimados** | 5–10 usuários administrativos (instrutores e gestores) |
+| **Principais consultas** | Alunos com matrícula ativa, matrículas vencendo em 30 dias, receita por plano, histórico de treino por aluno, ranking de exercícios mais utilizados |
+
+---
+
+## 2. Escolha Tecnológica: PostgreSQL (SQL Relacional)
 
 ### Por que SQL e não NoSQL?
 
@@ -19,7 +31,7 @@ O PostgreSQL foi escolhido pelos seguintes motivos:
 
 ---
 
-## 2. Normalização
+## 3. Normalização
 
 ### 1ª Forma Normal (1FN)
 Todas as tabelas possuem atributos atômicos (sem grupos repetidos ou arrays em colunas). Exemplo: os exercícios de um treino não ficam em uma coluna do tipo array dentro de `treinos` — estão na tabela pivô `treino_exercicios`.
@@ -35,7 +47,7 @@ A coluna `data_fim` em `matriculas` é tecnicamente derivável de `data_inicio +
 
 ---
 
-## 3. Estratégia de Indexação
+## 4. Estratégia de Indexação
 
 | Índice | Tabela | Campo | Tipo | Justificativa |
 |---|---|---|---|---|
@@ -52,7 +64,7 @@ A coluna `data_fim` em `matriculas` é tecnicamente derivável de `data_inicio +
 
 ---
 
-## 4. Decisão: RDS vs EC2 / S3 vs EFS (contexto AWS)
+## 5. Decisão: RDS vs EC2 / S3 vs EFS (contexto AWS)
 
 Para o cenário de infraestrutura web da avaliação:
 
