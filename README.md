@@ -29,7 +29,12 @@ cp .env.example .env
 ```
 O `.env.example` já contém valores funcionais para desenvolvimento. Edite se necessário.
 
-### 3. Subir os containers
+### 3. Instalar dependências (gera o package-lock.json)
+```bash
+npm install
+```
+
+### 4. Subir os containers
 ```bash
 docker compose up --build
 ```
