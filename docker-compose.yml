@@ -6,6 +6,7 @@ networks:
 
 volumes:
   postgres_data:
+  redis_data:
 
 services:
 
@@ -27,6 +28,23 @@ services:
       timeout: 5s
       retries: 5
 
+  cache:
+    image: redis:7-alpine
+    container_name: gymdata_cache
+    restart: unless-stopped
+    command: redis-server --requirepass ${REDIS_PASSWORD} --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
+    # PORTA NÃO EXPOSTA AO HOST — acessível apenas internamente via DNS
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
   app:
     build:
       context: .
@@ -37,10 +55,13 @@ services:
     env_file: .env
     environment:
       DB_HOST: db
+      REDIS_HOST: cache
     networks:
       - app-network
     depends_on:
       db:
+        condition: service_healthy
+      cache:
         condition: service_healthy
     # Sem "ports" — Node só acessível via Nginx
 
