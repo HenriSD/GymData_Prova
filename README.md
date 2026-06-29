@@ -200,7 +200,8 @@ docker exec gymdata_app ping -c 3 cache
 docker exec gymdata_cache redis-cli -a gymredispassword ping
 
 # Inspecionar rede
-docker network inspect gymdata_app-network
+docker network ls | grep app-network
+docker network inspect $(docker network ls --format "{{.Name}}" | grep app-network)
 
 # Volumes nomeados
 docker volume ls | grep gymdata
