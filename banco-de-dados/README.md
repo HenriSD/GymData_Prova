@@ -76,6 +76,42 @@ docker exec -i gymdata_db psql -U gymuser -d gymdata < scripts/setup.sql
 
 ## Conectar no DBeaver
 
+Por padrão, a porta do PostgreSQL **não fica exposta ao host** (requisito da prova de Infraestrutura, que exige o banco isolado e acessível apenas pela rede interna).
+
+Para conectar via DBeaver, abra o arquivo `docker-compose.yml` na raiz do projeto e localize o serviço `db`:
+
+```yaml
+  db:
+    image: postgres:17-alpine
+    container_name: gymdata_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+```
+
+Adicione a linha `ports` logo abaixo de `restart: unless-stopped`:
+
+```yaml
+  db:
+    image: postgres:17-alpine
+    container_name: gymdata_db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"        # ← adicionar esta linha
+    environment:
+```
+
+Depois suba os containers novamente:
+
+```bash
+docker compose down
+docker compose up --build
+```
+
+E conecte no DBeaver com:
+
 | Campo | Valor |
 |---|---|
 | Host | `localhost` |
@@ -84,7 +120,7 @@ docker exec -i gymdata_db psql -U gymuser -d gymdata < scripts/setup.sql
 | Username | `gymuser` |
 | Password | `gympassword` |
 
-> Para conectar via DBeaver o container precisa ter a porta exposta. Adicione temporariamente no `docker-compose.yml` em `db`: `ports: ["5432:5432"]`
+> Essa alteração é apenas para fins de avaliação/acesso direto ao banco. Para a defesa da prova de Infraestrutura, a porta deve permanecer fechada, demonstrando o isolamento de rede exigido.
 
 ---
 
